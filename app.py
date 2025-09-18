@@ -12,6 +12,11 @@ import uuid
 import mimetypes
 
 app = Flask(__name__)
+
+# Configure Flask for Replit proxy environment
+app.config['SERVER_NAME'] = None  # Allow all hosts for Replit proxy
+app.config['APPLICATION_ROOT'] = '/'
+
 # Security configuration with development fallbacks
 SECRET_KEY = os.environ.get('SECRET_KEY')
 ADMIN_USERNAME = os.environ.get('ADMIN_USERNAME')
@@ -50,6 +55,14 @@ csrf = CSRFProtect(app)
 app.config['SESSION_COOKIE_SECURE'] = IS_PRODUCTION
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+
+# Add cache control headers for Replit proxy
+@app.after_request
+def after_request(response):
+    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '0'
+    return response
 
 PORT = int(os.environ.get("PORT", "5000"))
 
