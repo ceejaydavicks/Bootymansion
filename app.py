@@ -269,11 +269,14 @@ def profile_detail(profile_id):
         return redirect(url_for('index'))
     
     # Get all media for this profile
-    media = conn.execute('''
+    media_rows = conn.execute('''
         SELECT * FROM media 
         WHERE profile_id = ? 
         ORDER BY created_at ASC
     ''', (profile_id,)).fetchall()
+    
+    # Convert Row objects to dictionaries for JSON serialization
+    media = [dict(row) for row in media_rows]
     
     # Get next profile for "Next Girl" functionality
     next_profile = conn.execute('''
@@ -290,7 +293,7 @@ def profile_detail(profile_id):
     conn.close()
     
     return render_template('profile.html', 
-                         profile=profile, 
+                         profile=dict(profile), 
                          media=media,
                          next_profile_id=next_profile['id'] if next_profile else None)
 
