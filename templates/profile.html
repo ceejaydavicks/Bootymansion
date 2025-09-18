@@ -10,10 +10,17 @@
             
             <div class="profile-hero">
                 {% if profile.cover_image %}
+                {% if profile.cover_image.startswith('http') %}
+                <img src="{{ profile.cover_image }}" 
+                     alt="{{ profile.name }}" 
+                     class="profile-hero-image"
+                     id="heroImage">
+                {% else %}
                 <img src="{{ url_for('secure_upload', filename=profile.cover_image.replace('uploads/', '')) }}" 
                      alt="{{ profile.name }}" 
                      class="profile-hero-image"
                      id="heroImage">
+                {% endif %}
                 {% endif %}
                 
                 <div class="profile-info">
@@ -37,10 +44,17 @@
                 {% for item in media %}
                 <div class="gallery-item" data-index="{{ loop.index0 }}" data-type="{{ item.media_type }}">
                     {% if item.media_type == 'image' %}
+                    {% if item.file_path.startswith('http') %}
+                    <img src="{{ item.file_path }}" 
+                         alt="{{ profile.name }}" 
+                         class="gallery-image"
+                         loading="lazy">
+                    {% else %}
                     <img src="{{ url_for('secure_upload', filename=item.file_path.replace('uploads/', '')) }}" 
                          alt="{{ profile.name }}" 
                          class="gallery-image"
                          loading="lazy">
+                    {% endif %}
                     {% else %}
                     <div class="gallery-video-thumbnail">
                         <video preload="metadata" class="gallery-video-preview">

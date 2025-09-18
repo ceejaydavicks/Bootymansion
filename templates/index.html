@@ -23,10 +23,17 @@
             {% for profile in profiles %}
             <div class="profile-card" data-profile-id="{{ profile.id }}">
                 {% if profile.cover_image %}
+                {% if profile.cover_image.startswith('http') %}
+                <img src="{{ profile.cover_image }}" 
+                     alt="{{ profile.name }}" 
+                     class="profile-image" 
+                     loading="lazy">
+                {% else %}
                 <img src="{{ url_for('secure_upload', filename=profile.cover_image.replace('uploads/', '')) }}" 
                      alt="{{ profile.name }}" 
                      class="profile-image" 
                      loading="lazy">
+                {% endif %}
                 {% else %}
                 <div class="profile-image-placeholder">
                     <span>{{ profile.name[0] }}</span>
