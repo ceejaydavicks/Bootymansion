@@ -513,11 +513,13 @@ def not_found_error(error):
 def internal_error(error):
     return render_template('errors/500.html'), 500
 
+# Initialize database on import for serverless
+init_db()
+
 if __name__ == '__main__':
     # Get debug mode from environment (False by default for production)
     debug_mode = os.environ.get('DEBUG', 'False').lower() == 'true'
     
-    init_db()
     print(f"Server running at http://0.0.0.0:{PORT}/")
     print("Admin dashboard available at /admin")
     if not debug_mode:
