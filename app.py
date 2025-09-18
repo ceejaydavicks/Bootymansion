@@ -13,10 +13,6 @@ import mimetypes
 
 app = Flask(__name__)
 
-# Configure Flask for Replit proxy environment
-app.config['SERVER_NAME'] = None  # Allow all hosts for Replit proxy
-app.config['APPLICATION_ROOT'] = '/'
-
 # Security configuration with development fallbacks
 SECRET_KEY = os.environ.get('SECRET_KEY')
 ADMIN_USERNAME = os.environ.get('ADMIN_USERNAME')
@@ -56,13 +52,7 @@ app.config['SESSION_COOKIE_SECURE'] = IS_PRODUCTION
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 
-# Add cache control headers for Replit proxy
-@app.after_request
-def after_request(response):
-    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
-    response.headers['Pragma'] = 'no-cache'
-    response.headers['Expires'] = '0'
-    return response
+
 
 PORT = int(os.environ.get("PORT", "5000"))
 
@@ -513,16 +503,14 @@ def not_found_error(error):
 def internal_error(error):
     return render_template('errors/500.html'), 500
 
-# Initialize database on import for serverless
-init_db()
-
 if __name__ == '__main__':
+    init_db()
     # Get debug mode from environment (False by default for production)
     debug_mode = os.environ.get('DEBUG', 'False').lower() == 'true'
     
-    print(f"Server running at http://0.0.0.0:{PORT}/")
+    print(f"Server running at http://localhost:{PORT}/")
     print("Admin dashboard available at /admin")
     if not debug_mode:
         print("Production mode - Debug disabled")
     
-    app.run(host='0.0.0.0', port=PORT, debug=debug_mode)
+    app.run(host='127.0.0.1', port=PORT, debug=debug_mode)
