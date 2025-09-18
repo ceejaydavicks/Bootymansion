@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}BOOTYMANSION{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <meta name="robots" content="noindex, nofollow">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <h1 class="logo">
+                <a href="{{ url_for('index') }}">BOOTYMANSION</a>
+            </h1>
+            <div class="search-bar">
+                <input type="text" placeholder="Search models..." id="searchInput">
+                <button class="search-btn" id="searchBtn">🔍</button>
+            </div>
+            <nav class="nav">
+                <a href="{{ url_for('index') }}" class="nav-link">Home</a>
+                <a href="#" class="nav-link">Contact</a>
+                <a href="{{ url_for('admin_dashboard') }}" class="nav-link admin-link">Admin</a>
+            </nav>
+        </div>
+    </header>
+
+    {% block content %}{% endblock %}
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-links">
+                <a href="#" class="footer-link">Privacy Policy</a>
+                <a href="#" class="footer-link">Terms of Service</a>
+                <a href="#" class="footer-link">Disclaimer</a>
+                <a href="#" class="footer-link">Contact</a>
+            </div>
+            <div class="footer-disclaimer">
+                <p><strong>18+ ONLY</strong></p>
+                <p>This website contains adult content and is intended for adults only. By entering this site, you affirm that you are at least 18 years of age.</p>
+            </div>
+            <div class="footer-copyright">
+                <p>&copy; 2025 BOOTYMANSION. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

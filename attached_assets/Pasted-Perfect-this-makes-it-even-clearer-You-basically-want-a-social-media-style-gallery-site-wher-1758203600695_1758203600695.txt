@@ -1,0 +1,130 @@
+Perfect — this makes it even clearer.
+You basically want a **social-media-style gallery site** where you can post new girls anytime, each girl has her own profile page, and people can click through freely — no login, no payment, just scrolling + clicking.
+
+Here’s how we can structure it step-by-step:
+
+---
+
+## 🖼 Website Layout & Flow (Social Feed Style)
+
+### **1. Homepage = Social Feed**
+
+Think of it like Instagram’s explore page or a Pinterest feed:
+
+* **Header (Sticky)**
+
+  * Logo / Site Name
+  * Search bar (optional)
+  * Menu (Home | Categories | Contact)
+
+* **Main Feed (Endless Scroll)**
+
+  * Big image grid (2 columns on mobile, 4 on desktop)
+  * Each card shows:
+
+    * Girl’s photo (cover image)
+    * Name (or nickname)
+    * Small caption or description
+
+* **Click → Opens Profile Page**
+
+---
+
+### **2. Profile Page = Girl’s Gallery**
+
+This is where users spend time:
+
+* **Hero Section**
+
+  * Big profile photo (or banner style)
+  * Name + Short Bio / Caption
+
+* **Gallery Section**
+
+  * Grid of all her photos & videos
+  * Clicking a photo opens a lightbox (fullscreen view)
+
+* **Ad Placement**
+
+  * Banner ad below hero photo
+  * Native ad between grid rows
+  * Optional popunder on first click
+
+* **Navigation**
+
+  * “Back to Feed” button
+  * “Next Girl” button → takes them to next profile (or to your Adsterra direct link)
+
+---
+
+### **3. Categories / Filters**
+
+To make it easier to browse, you can have:
+
+* **Category Buttons** on top of feed:
+
+  * Example: *Curvy, Slim, Lingerie, Streetwear, Swimsuit*
+* Clicking a category filters the feed instantly (like a tag system).
+
+---
+
+### **4. Admin / Updating**
+
+Since you’ll update frequently, use a **CMS (content management system)** so you can add:
+
+* New girl profile (name, bio, cover photo)
+* Add images/videos to each profile
+* Update captions easily
+
+If you want this to be simple, **WordPress with a gallery plugin** or **Webflow CMS** is perfect.
+Each time you add a new “girl profile” in the backend, it appears automatically on the homepage feed.
+
+---
+
+### **5. Look & Feel**
+
+* **Dark, sexy, premium design** (black background, white text, neon highlights)
+* **Big images** (take most of the screen)
+* **Mobile-first** (tappable cards, smooth scroll)
+* **No sign-up** (just pure browsing)
+* **Sticky buttons** (easy navigation)
+
+---
+
+## 📜 Replit Description (Copy-Paste)
+
+You can tell Replit AI builder this:
+
+> **Build a social-feed style gallery website called "HotGallery".**
+> The site will feature different models (girls), with new profiles added regularly.
+>
+> **Homepage:**
+>
+> * Grid layout of models' cover photos (2–3 per row).
+> * Each card shows the girl’s name and short caption.
+> * Clicking a card opens the girl’s profile page.
+> * Infinite scroll or “Load More” button.
+>
+> **Profile Page:**
+>
+> * Large profile photo and name at the top.
+> * Grid of that girl’s photos/videos below.
+> * Clicking an image opens a fullscreen lightbox view.
+> * “Back to Feed” button at the top.
+> * “Next Girl” button at bottom (links to next profile or external URL).
+>
+> **Design:**
+>
+> * Dark theme (black background, white text, red/pink accent).
+> * Mobile-first layout with big, tappable images.
+> * Smooth animations when scrolling or loading new posts.
+>
+> **Extra:**
+>
+> * Footer with Privacy Policy, Terms, and 18+ Disclaimer.
+> * Admin panel where I can easily add new girls, captions, photos, and videos without coding.
+> * Optimized for fast loading (lazy-load images).
+
+---
+
+Would you like me to **generate a mockup image** of the homepage (feed) + one girl’s profile page so you can visualize how it will look before building? This will help you show exactly what you want to Replit or a designer.

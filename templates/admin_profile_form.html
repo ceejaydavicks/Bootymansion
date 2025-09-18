@@ -1,0 +1,238 @@
+{% extends "base.html" %}
+
+{% block title %}{% if profile %}Edit {{ profile.name }}{% else %}Add New Model{% endif %} - Admin - BOOTYMANSION{% endblock %}
+
+{% block content %}
+<main class="main admin-main">
+    <div class="container">
+        <div class="admin-header">
+            <h1>{% if profile %}Edit {{ profile.name }}{% else %}Add New Model{% endif %}</h1>
+            <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">← Back to Dashboard</a>
+        </div>
+
+        <div class="profile-form-container">
+            <form method="POST" enctype="multipart/form-data" class="profile-form" id="profileForm">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <div class="form-section">
+                    <h2>Basic Information</h2>
+                    
+                    <div class="form-group">
+                        <label for="name">Model Name *</label>
+                        <input type="text" 
+                               id="name" 
+                               name="name" 
+                               value="{{ profile.name if profile else '' }}" 
+                               required 
+                               placeholder="Enter model name">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea id="description" 
+                                  name="description" 
+                                  rows="3" 
+                                  placeholder="Brief description or caption">{{ profile.description if profile else '' }}</textarea>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h2>Categories</h2>
+                    <div class="categories-grid">
+                        {% for category in categories %}
+                        <label class="category-checkbox">
+                            <input type="checkbox" 
+                                   name="categories" 
+                                   value="{{ category.id }}"
+                                   {% if profile and category.id in profile_category_ids %}checked{% endif %}>
+                            <span class="checkmark"></span>
+                            {{ category.name }}
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                {% if profile and media %}
+                <div class="form-section">
+                    <h2>Current Media ({{ media|length }} items)</h2>
+                    <div class="current-media-grid">
+                        {% for item in media %}
+                        <div class="media-item">
+                            {% if item.media_type == 'image' %}
+                            <img src="{{ url_for('secure_upload', filename=item.file_path.replace('uploads/', '')) }}" 
+                                 alt="{{ profile.name }}" 
+                                 class="media-thumbnail">
+                            {% else %}
+                            <div class="video-thumbnail">
+                                <video class="media-thumbnail" preload="metadata">
+                                    <source src="{{ url_for('secure_upload', filename=item.file_path.replace('uploads/', '')) }}" type="video/mp4">
+                                </video>
+                                <div class="video-play-icon">▶</div>
+                            </div>
+                            {% endif %}
+                            <div class="media-info">
+                                <span class="media-type">{{ item.media_type.title() }}</span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="form-section">
+                    <h2>{% if profile %}Add More Media{% else %}Upload Media{% endif %}</h2>
+                    
+                    <div class="upload-area" id="uploadArea">
+                        <div class="upload-placeholder">
+                            <div class="upload-icon">📁</div>
+                            <p>Click to select files or drag and drop</p>
+                            <p class="upload-hint">Supports: JPG, PNG, GIF, MP4, WebM (Max 50MB each)</p>
+                        </div>
+                        <input type="file" 
+                               id="mediaFiles" 
+                               name="media_files" 
+                               multiple 
+                               accept="image/*,video/*"
+                               style="display: none;">
+                    </div>
+                    
+                    <div class="upload-preview" id="uploadPreview"></div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary btn-large">
+                        {% if profile %}Update Model{% else %}Create Model{% endif %}
+                    </button>
+                    <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary btn-large">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const uploadArea = document.getElementById('uploadArea');
+    const mediaFiles = document.getElementById('mediaFiles');
+    const uploadPreview = document.getElementById('uploadPreview');
+    
+    // Click to upload
+    uploadArea.addEventListener('click', () => {
+        mediaFiles.click();
+    });
+    
+    // Drag and drop
+    uploadArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadArea.classList.add('drag-over');
+    });
+    
+    uploadArea.addEventListener('dragleave', () => {
+        uploadArea.classList.remove('drag-over');
+    });
+    
+    uploadArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadArea.classList.remove('drag-over');
+        const files = e.dataTransfer.files;
+        mediaFiles.files = files;
+        updatePreview(files);
+    });
+    
+    // File selection
+    mediaFiles.addEventListener('change', (e) => {
+        updatePreview(e.target.files);
+    });
+    
+    function updatePreview(files) {
+        uploadPreview.innerHTML = '';
+        
+        if (files.length > 0) {
+            uploadArea.style.display = 'none';
+            
+            Array.from(files).forEach((file, index) => {
+                const previewItem = document.createElement('div');
+                previewItem.className = 'preview-item';
+                
+                const fileName = document.createElement('span');
+                fileName.className = 'preview-filename';
+                fileName.textContent = file.name;
+                
+                const fileSize = document.createElement('span');
+                fileSize.className = 'preview-filesize';
+                fileSize.textContent = formatFileSize(file.size);
+                
+                previewItem.appendChild(fileName);
+                previewItem.appendChild(fileSize);
+                
+                // Create thumbnail if it's an image
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.className = 'preview-thumbnail';
+                        previewItem.insertBefore(img, fileName);
+                    };
+                    reader.readAsDataURL(file);
+                } else if (file.type.startsWith('video/')) {
+                    const videoIcon = document.createElement('div');
+                    videoIcon.className = 'preview-video-icon';
+                    videoIcon.textContent = '🎥';
+                    previewItem.insertBefore(videoIcon, fileName);
+                }
+                
+                uploadPreview.appendChild(previewItem);
+            });
+            
+            // Add option to select more files
+            const addMoreBtn = document.createElement('button');
+            addMoreBtn.type = 'button';
+            addMoreBtn.className = 'btn btn-secondary add-more-btn';
+            addMoreBtn.textContent = 'Add More Files';
+            addMoreBtn.addEventListener('click', () => {
+                uploadArea.style.display = 'block';
+                mediaFiles.value = '';
+                uploadPreview.innerHTML = '';
+            });
+            uploadPreview.appendChild(addMoreBtn);
+        } else {
+            uploadArea.style.display = 'block';
+        }
+    }
+    
+    function formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+    
+    // Form validation
+    const profileForm = document.getElementById('profileForm');
+    profileForm.addEventListener('submit', (e) => {
+        const name = document.getElementById('name').value.trim();
+        if (!name) {
+            e.preventDefault();
+            alert('Model name is required.');
+            return;
+        }
+        
+        // Check if any categories are selected
+        const categories = document.querySelectorAll('input[name="categories"]:checked');
+        if (categories.length === 0) {
+            const confirmSubmit = confirm('No categories selected. Continue anyway?');
+            if (!confirmSubmit) {
+                e.preventDefault();
+                return;
+            }
+        }
+        
+        // Show loading state
+        const submitBtn = profileForm.querySelector('button[type="submit"]');
+        submitBtn.textContent = 'Uploading...';
+        submitBtn.disabled = true;
+    });
+</script>
+{% endblock %}

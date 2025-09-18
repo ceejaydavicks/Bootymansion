@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Login - BOOTYMANSION{% endblock %}
+
+{% block content %}
+<main class="main admin-main">
+    <div class="container">
+        <div class="login-container">
+            <div class="login-form">
+                <h1>Admin Login</h1>
+                <p>Access the admin dashboard</p>
+
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                <form method="POST" class="login-form-inner">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" 
+                               id="username" 
+                               name="username" 
+                               required 
+                               autocomplete="username"
+                               placeholder="Enter admin username">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" 
+                               id="password" 
+                               name="password" 
+                               required 
+                               autocomplete="current-password"
+                               placeholder="Enter admin password">
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-large">
+                        Sign In
+                    </button>
+                </form>
+
+                <div class="login-footer">
+                    <a href="{{ url_for('index') }}" class="back-link">← Back to Website</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<style>
+.login-container {
+    max-width: 400px;
+    margin: 4rem auto;
+    padding: 2rem;
+}
+
+.login-form {
+    background: linear-gradient(135deg, #111 0%, #1a1a1a 100%);
+    padding: 3rem;
+    border-radius: 20px;
+    border: 2px solid #333;
+    text-align: center;
+}
+
+.login-form h1 {
+    color: #ff1744;
+    margin-bottom: 0.5rem;
+    font-size: 2rem;
+}
+
+.login-form p {
+    color: #ccc;
+    margin-bottom: 2rem;
+}
+
+.login-form-inner {
+    text-align: left;
+}
+
+.alert {
+    padding: 1rem;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    font-weight: 500;
+}
+
+.alert-success {
+    background: rgba(76, 175, 80, 0.2);
+    color: #4caf50;
+    border: 1px solid #4caf50;
+}
+
+.alert-error {
+    background: rgba(244, 67, 54, 0.2);
+    color: #f44336;
+    border: 1px solid #f44336;
+}
+
+.login-footer {
+    margin-top: 2rem;
+    text-align: center;
+}
+
+.back-link {
+    color: #ccc;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.back-link:hover {
+    color: #ff1744;
+}
+</style>
+{% endblock %}

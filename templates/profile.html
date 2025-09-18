@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+
+{% block title %}{{ profile.name }} - BOOTYMANSION{% endblock %}
+
+{% block content %}
+<main class="main profile-main">
+    <div class="container">
+        <div class="profile-header">
+            <button class="back-btn" onclick="history.back()">← Back to Feed</button>
+            
+            <div class="profile-hero">
+                {% if profile.cover_image %}
+                <img src="{{ url_for('secure_upload', filename=profile.cover_image.replace('uploads/', '')) }}" 
+                     alt="{{ profile.name }}" 
+                     class="profile-hero-image"
+                     id="heroImage">
+                {% endif %}
+                
+                <div class="profile-info">
+                    <h1 class="profile-name">{{ profile.name }}</h1>
+                    <p class="profile-description">{{ profile.description or 'Beautiful model' }}</p>
+                    
+                    {% if profile.category_names %}
+                    <div class="profile-categories">
+                        {% for category in profile.category_names.split(',') %}
+                        <span class="category-tag">{{ category.strip() }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="profile-gallery" id="profileGallery">
+            <h2 class="gallery-title">Full Gallery ({{ media|length }} items)</h2>
+            <div class="gallery-grid">
+                {% for item in media %}
+                <div class="gallery-item" data-index="{{ loop.index0 }}" data-type="{{ item.media_type }}">
+                    {% if item.media_type == 'image' %}
+                    <img src="{{ url_for('secure_upload', filename=item.file_path.replace('uploads/', '')) }}" 
+                         alt="{{ profile.name }}" 
+                         class="gallery-image"
+                         loading="lazy">
+                    {% else %}
+                    <div class="gallery-video-thumbnail">
+                        <video preload="metadata" class="gallery-video-preview">
+                            <source src="{{ url_for('secure_upload', filename=item.file_path.replace('uploads/', '')) }}" type="video/mp4">
+                        </video>
+                        <div class="play-icon">▶</div>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        {% if next_profile_id %}
+        <div class="profile-navigation">
+            <a href="{{ url_for('profile_detail', profile_id=next_profile_id) }}" class="next-girl-btn">
+                Next Girl →
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</main>
+
+<!-- Fullscreen Lightbox -->
+<div class="lightbox-overlay" id="lightboxOverlay">
+    <div class="lightbox-content">
+        <button class="lightbox-close" id="lightboxClose">&times;</button>
+        <button class="lightbox-prev" id="lightboxPrev">❮</button>
+        <button class="lightbox-next" id="lightboxNext">❯</button>
+        
+        <div class="lightbox-media-container">
+            <div class="lightbox-media" id="lightboxMedia"></div>
+        </div>
+        
+        <div class="lightbox-counter" id="lightboxCounter"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const media = {{ media | tojson }};
+    let currentIndex = 0;
+    
+    const lightboxOverlay = document.getElementById('lightboxOverlay');
+    const lightboxMedia = document.getElementById('lightboxMedia');
+    const lightboxCounter = document.getElementById('lightboxCounter');
+    const lightboxClose = document.getElementById('lightboxClose');
+    const lightboxPrev = document.getElementById('lightboxPrev');
+    const lightboxNext = document.getElementById('lightboxNext');
+    
+    // Gallery item click handlers
+    document.querySelectorAll('.gallery-item').forEach((item, index) => {
+        item.addEventListener('click', () => {
+            currentIndex = index;
+            openLightbox();
+        });
+    });
+    
+    function openLightbox() {
+        const item = media[currentIndex];
+        lightboxMedia.innerHTML = '';
+        
+        const uploadBase = "{{ url_for('secure_upload', filename='') }}";
+        
+        if (item.media_type === 'image') {
+            const img = document.createElement('img');
+            img.src = uploadBase + item.file_path.replace('uploads/', '');
+            img.alt = '{{ profile.name }}';
+            img.className = 'lightbox-image';
+            lightboxMedia.appendChild(img);
+        } else {
+            const video = document.createElement('video');
+            video.src = uploadBase + item.file_path.replace('uploads/', '');
+            video.controls = true;
+            video.autoplay = false;
+            video.className = 'lightbox-video';
+            lightboxMedia.appendChild(video);
+        }
+        
+        updateLightboxCounter();
+        lightboxOverlay.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+    
+    function closeLightbox() {
+        lightboxOverlay.style.display = 'none';
+        document.body.style.overflow = 'auto';
+        
+        // Pause any playing videos
+        const video = lightboxMedia.querySelector('video');
+        if (video) {
+            video.pause();
+        }
+    }
+    
+    function nextMedia() {
+        currentIndex = (currentIndex + 1) % media.length;
+        openLightbox();
+    }
+    
+    function prevMedia() {
+        currentIndex = (currentIndex - 1 + media.length) % media.length;
+        openLightbox();
+    }
+    
+    function updateLightboxCounter() {
+        lightboxCounter.textContent = `${currentIndex + 1} / ${media.length}`;
+    }
+    
+    // Event listeners
+    lightboxClose.addEventListener('click', closeLightbox);
+    lightboxPrev.addEventListener('click', prevMedia);
+    lightboxNext.addEventListener('click', nextMedia);
+    
+    lightboxOverlay.addEventListener('click', (e) => {
+        if (e.target === lightboxOverlay) {
+            closeLightbox();
+        }
+    });
+    
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+        if (lightboxOverlay.style.display === 'flex') {
+            switch(e.key) {
+                case 'Escape':
+                    closeLightbox();
+                    break;
+                case 'ArrowLeft':
+                    prevMedia();
+                    break;
+                case 'ArrowRight':
+                    nextMedia();
+                    break;
+            }
+        }
+    });
+
+    // Hero image click to open in lightbox
+    const heroImage = document.getElementById('heroImage');
+    if (heroImage && media.length > 0) {
+        heroImage.addEventListener('click', () => {
+            currentIndex = 0;
+            openLightbox();
+        });
+        heroImage.style.cursor = 'pointer';
+    }
+</script>
+{% endblock %}

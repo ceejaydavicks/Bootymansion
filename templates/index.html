@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+
+{% block title %}BOOTYMANSION - Premium Model Gallery{% endblock %}
+
+{% block content %}
+<main class="main">
+    <div class="container">
+        <!-- Category Filter Bar -->
+        <div class="category-bar" id="categoryBar">
+            <div class="category-scroll">
+                {% for category in categories %}
+                <a href="{{ url_for('index', slug=category.slug) }}" 
+                   class="category-btn {% if current_category == category.slug %}active{% endif %}"
+                   data-category="{{ category.slug }}">
+                    {{ category.name }}
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Profile Grid -->
+        <div class="profile-grid" id="profileGrid">
+            {% for profile in profiles %}
+            <div class="profile-card" data-profile-id="{{ profile.id }}">
+                {% if profile.cover_image %}
+                <img src="{{ url_for('secure_upload', filename=profile.cover_image.replace('uploads/', '')) }}" 
+                     alt="{{ profile.name }}" 
+                     class="profile-image" 
+                     loading="lazy">
+                {% else %}
+                <div class="profile-image-placeholder">
+                    <span>{{ profile.name[0] }}</span>
+                </div>
+                {% endif %}
+                <div class="profile-details">
+                    <h3 class="profile-title">{{ profile.name }}</h3>
+                    <p class="profile-subtitle">{{ profile.description or 'Beautiful model' }}</p>
+                    <div class="profile-categories">
+                        {% if profile.category_names %}
+                        {% for category in profile.category_names.split(',') %}
+                        <span class="category-tag">{{ category.strip() }}</span>
+                        {% endfor %}
+                        {% endif %}
+                    </div>
+                    <div class="profile-stats">
+                        <span class="media-count">{{ profile.media_count }} photos</span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        {% if not profiles %}
+        <div class="empty-state">
+            <h2>No models found</h2>
+            <p>{% if current_category != 'all' %}No models in this category yet.{% else %}No models available yet.{% endif %}</p>
+            <a href="{{ url_for('admin_new_profile') }}" class="btn btn-primary">Add New Model</a>
+        </div>
+        {% endif %}
+    </div>
+</main>
+
+<!-- Lightbox Modal -->
+<div class="lightbox-overlay" id="lightboxOverlay">
+    <div class="lightbox-content">
+        <button class="lightbox-close" id="lightboxClose">&times;</button>
+        <button class="lightbox-prev" id="lightboxPrev">❮</button>
+        <button class="lightbox-next" id="lightboxNext">❯</button>
+        <div class="lightbox-media" id="lightboxMedia"></div>
+        <div class="lightbox-info" id="lightboxInfo"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Profile click handlers
+    document.querySelectorAll('.profile-card').forEach(card => {
+        card.addEventListener('click', () => {
+            const profileId = card.dataset.profileId;
+            window.location.href = `/profile/${profileId}`;
+        });
+    });
+
+    // Search functionality
+    const searchInput = document.getElementById('searchInput');
+    const searchBtn = document.getElementById('searchBtn');
+    
+    function performSearch() {
+        const query = searchInput.value.toLowerCase();
+        const cards = document.querySelectorAll('.profile-card');
+        
+        cards.forEach(card => {
+            const title = card.querySelector('.profile-title').textContent.toLowerCase();
+            const description = card.querySelector('.profile-subtitle').textContent.toLowerCase();
+            const categories = card.querySelector('.profile-categories').textContent.toLowerCase();
+            
+            if (title.includes(query) || description.includes(query) || categories.includes(query)) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
+    
+    searchInput.addEventListener('input', performSearch);
+    searchBtn.addEventListener('click', performSearch);
+
+    // Smooth scrolling for category bar
+    const categoryBar = document.getElementById('categoryBar');
+    let isDown = false;
+    let startX;
+    let scrollLeft;
+
+    categoryBar.addEventListener('mousedown', (e) => {
+        isDown = true;
+        startX = e.pageX - categoryBar.offsetLeft;
+        scrollLeft = categoryBar.scrollLeft;
+    });
+
+    categoryBar.addEventListener('mouseleave', () => {
+        isDown = false;
+    });
+
+    categoryBar.addEventListener('mouseup', () => {
+        isDown = false;
+    });
+
+    categoryBar.addEventListener('mousemove', (e) => {
+        if (!isDown) return;
+        e.preventDefault();
+        const x = e.pageX - categoryBar.offsetLeft;
+        const walk = (x - startX) * 2;
+        categoryBar.scrollLeft = scrollLeft - walk;
+    });
+</script>
+{% endblock %}
