@@ -1,0 +1,84 @@
+PROJECT: BootyMansion Website
+
+DESCRIPTION:
+Build a simple, responsive website called BootyMansion. 
+It should look like a social media-style feed where I can upload images or videos of different models. 
+Users should be able to click any model’s image to see their profile page with more photos/videos and a bio.
+
+CORE FEATURES:
+1. HOMEPAGE
+- Display all posts in a grid layout (NOT a list).
+
+IMPORTANT LAYOUT UPDATE:
+- Desktop: 3 or 4 columns (responsive)
+- Tablet: 2 columns
+- Mobile: 1 column (full width)
+- Each grid card should have:
+   • Image or video thumbnail
+   • Model name/caption under the image
+   • Small hover animation (slight zoom-in)
+- Small gap between grid items (so it looks clean and organized)
+- Cards should have rounded corners and subtle shadow.
+- Grid should automatically adjust as I add more models (masonry or responsive grid).
+- Infinite scroll or pagination so I can keep adding content.
+
+2. CATEGORY FILTERS
+- Add clickable buttons/tabs for categories like:
+   • Latina
+   • Asian
+   • Ebony
+   • Thick
+   • Blonde
+   • Trending
+- When clicked, show only models in that category.
+- Category filter should be visible at the top of the feed.
+
+3. PROFILE PAGES
+- Larger header image of the model
+- Model bio/description
+- Gallery grid with more photos or videos
+- Space for related models (“You might also like” section).
+- Fullscreen lightbox for viewing images/videos.
+
+4. ADMIN PANEL (VERY IMPORTANT)
+- Simple dashboard where I can:
+   • Upload new images/videos and assign category + caption
+   • Edit or delete posts anytime
+   • Manage categories (add/remove)
+   • Control ads (see below)
+
+5. ADS & MONETIZATION
+- Homepage:
+   • Banner slot under header (rotatable)
+   • Native ad card after every 6–8 model posts
+   • Sticky footer ad bar for mobile (with close button)
+- Profile Page:
+   • Banner slot under model name/photo
+   • Native ad slot between gallery rows
+   • Bottom CTA button/banner ("Watch Live Cams" or other offers)
+- Admin dashboard should allow me to change ads anytime (paste new HTML/JS ad code or image+link).
+
+6. DESIGN STYLE
+- Clean, modern look
+- Dark mode by default (black or deep grey background, white text)
+- Rounded cards with hover effect
+- Mobile-first design (should look good on small screens)
+
+7. PERFORMANCE
+- Fast loading, image lazy-loading for performance
+- SEO-friendly (each model profile should have its own shareable link)
+
+8. EXTRAS
+- Search bar so users can type a model name
+- "Trending" section for most clicked profiles
+- Simple analytics (number of clicks per model)
+- Social sharing buttons (copy link to share)
+
+SAMPLE CONTENT:
+- Please create 4 sample profiles with placeholder images/videos, names, and categories so I can see how the homepage and profile pages will look and function.
+
+TECH STACK SUGGESTION:
+- Frontend: React + TailwindCSS
+- Backend: Node.js + Express
+- Database: MongoDB or Firebase (for easy data management)
+- Admin panel: Simple React dashboard for uploads & ad management

@@ -484,7 +484,6 @@ def api_profiles():
     return jsonify([dict(profile) for profile in profiles])
 
 @app.route('/uploads/<path:filename>')
-@login_required
 def secure_upload(filename):
     """Securely serve uploaded files"""
     # Determine if it's an image or video
