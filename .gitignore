@@ -1,0 +1,61 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+.venv/
+.pythonlibs/
+venv/
+env/
+
+# Environment variables
+.env
+
+# Database
+*.db
+
+# Upload directories (keep structure but ignore content)
+uploads/images/*
+uploads/videos/*
+!uploads/images/.gitkeep
+!uploads/videos/.gitkeep
+
+# Flask
+instance/
+.webassets-cache
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Don't ignore Replit configuration
+!.replit
+!replit.nix
